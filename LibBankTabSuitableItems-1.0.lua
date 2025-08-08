@@ -55,7 +55,9 @@ local classMap = {
 }
 
 function lib:IsItemLocationSuitableForTab(itemLocation, bankType, tabID)
+	-- print("IsItemLocationSuitableForTab", C_Item.GetItemLink(itemLocation), itemLocation:GetBagAndSlot())
 	if not C_Bank.IsItemAllowedInBankType(bankType, itemLocation) then
+		-- print("Not allowed in bank type", bankType)
 		return false
 	end
 	return self:IsItemSuitableForTab(C_Item.GetItemID(itemLocation), bankType, tabID)
@@ -68,16 +70,19 @@ end
 -- @return Whether the item is appropriate; if nil, the data wasn't fetchable
 function lib:IsItemSuitableForTab(itemInfo, bankType, tabID)
 	-- See: https://warcraft.wiki.gg/wiki/API_C_Bank.FetchPurchasedBankTabData
+	-- print("IsItemSuitableForTab", itemInfo, bankType, tabID)
 	local data = self:GetTabData(bankType, tabID)
 	if not (data and data.depositFlags) then return end
 	local depositFlags = data.depositFlags
 	if not FlagsUtil.IsAnySet(depositFlags, itemRestrictions) then
 		-- There are no restrictions, so it must be fine
+		-- print(true, "no restrictions")
 		return true
 	end
 	-- From here the item needs to affirmatively match the restrictions
 	local itemID, itemType, itemSubType, itemEquipLoc, icon, classID, subClassID = C_Item.GetItemInfoInstant(itemInfo)
 	if not itemID then
+		-- print(nil, "no item data")
 		return
 	end
 
@@ -90,10 +95,13 @@ function lib:IsItemSuitableForTab(itemInfo, bankType, tabID)
 	if FlagsUtil.IsAnySet(depositFlags, expansionRestrictions) then
 		local expansionID = select(15, C_Item.GetItemInfo(itemInfo))
 		if FlagsUtil.IsSet(depositFlags, Enum.BagSlotFlags.ExpansionCurrent) then
+			-- print(expansionID == LE_EXPANSION_LEVEL_CURRENT, "item current-expansion flag set", expansionID)
 			return expansionID == LE_EXPANSION_LEVEL_CURRENT
 		end
+		-- print(expansionID ~= LE_EXPANSION_LEVEL_CURRENT, "item previous-expansion flag set", expansionID)
 		return expansionID ~= LE_EXPANSION_LEVEL_CURRENT
 	end
+	-- print(false, "complete fallthrough")
 	return false
 end
 
