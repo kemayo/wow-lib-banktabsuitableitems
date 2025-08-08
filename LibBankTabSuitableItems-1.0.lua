@@ -56,6 +56,9 @@ local classMap = {
 
 function lib:IsItemLocationSuitableForTab(itemLocation, bankType, tabID)
 	-- print("IsItemLocationSuitableForTab", C_Item.GetItemLink(itemLocation), itemLocation:GetBagAndSlot())
+	if not C_Bank.CanViewBank(bankType) then
+		return
+	end
 	if not C_Bank.IsItemAllowedInBankType(bankType, itemLocation) then
 		-- print("Not allowed in bank type", bankType)
 		return false
