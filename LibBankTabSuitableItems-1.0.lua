@@ -1,4 +1,4 @@
-local lib, oldMinor = LibStub:NewLibrary("LibBankTabSuitableItems-1.0", 2)
+local lib, oldMinor = LibStub:NewLibrary("LibBankTabSuitableItems-1.0", 3)
 if not lib then return end
 
 --[[
@@ -181,19 +181,22 @@ function lib:GetTabData(tabID, bankType)
 end
 
 do
-	local tabIDToBankType = {
-		[Enum.BagIndex.AccountBankTab_1] = Enum.BankType.Account,
-		[Enum.BagIndex.AccountBankTab_2] = Enum.BankType.Account,
-		[Enum.BagIndex.AccountBankTab_3] = Enum.BankType.Account,
-		[Enum.BagIndex.AccountBankTab_4] = Enum.BankType.Account,
-		[Enum.BagIndex.AccountBankTab_5] = Enum.BankType.Account,
-		[Enum.BagIndex.CharacterBankTab_1] = Enum.BankType.Character,
-		[Enum.BagIndex.CharacterBankTab_2] = Enum.BankType.Character,
-		[Enum.BagIndex.CharacterBankTab_3] = Enum.BankType.Character,
-		[Enum.BagIndex.CharacterBankTab_4] = Enum.BankType.Character,
-		[Enum.BagIndex.CharacterBankTab_5] = Enum.BankType.Character,
-		[Enum.BagIndex.CharacterBankTab_6] = Enum.BankType.Character,
-	}
+	local tabIDToBankType = {}
+	if Enum.BagIndex.AccountBankTab_1 then
+		tabIDToBankType[Enum.BagIndex.AccountBankTab_1] = Enum.BankType.Account
+		tabIDToBankType[Enum.BagIndex.AccountBankTab_2] = Enum.BankType.Account
+		tabIDToBankType[Enum.BagIndex.AccountBankTab_3] = Enum.BankType.Account
+		tabIDToBankType[Enum.BagIndex.AccountBankTab_4] = Enum.BankType.Account
+		tabIDToBankType[Enum.BagIndex.AccountBankTab_5] = Enum.BankType.Account
+	end
+	if Enum.BagIndex.CharacterBankTab_1 then
+		tabIDToBankType[Enum.BagIndex.CharacterBankTab_1] = Enum.BankType.Character
+		tabIDToBankType[Enum.BagIndex.CharacterBankTab_2] = Enum.BankType.Character
+		tabIDToBankType[Enum.BagIndex.CharacterBankTab_3] = Enum.BankType.Character
+		tabIDToBankType[Enum.BagIndex.CharacterBankTab_4] = Enum.BankType.Character
+		tabIDToBankType[Enum.BagIndex.CharacterBankTab_5] = Enum.BankType.Character
+		tabIDToBankType[Enum.BagIndex.CharacterBankTab_6] = Enum.BankType.Character
+	end
 	--- Work out the bankType from a tabID
 	-- @param Enum.BagIndex
 	-- @return Enum.BankType|nil
