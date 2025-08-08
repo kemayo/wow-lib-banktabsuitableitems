@@ -1,7 +1,7 @@
 local lib, oldMinor = LibStub:NewLibrary("LibBankTabSuitableItems-1.0", 1)
 if not lib then return end
 
-local itemRestrictions = Flags_CreateMask(
+local flags = {
 	-- Enum.BagSlotFlags.DisableAutoSort,
 	Enum.BagSlotFlags.ClassEquipment,
 	Enum.BagSlotFlags.ClassConsumables,
@@ -12,7 +12,11 @@ local itemRestrictions = Flags_CreateMask(
 	Enum.BagSlotFlags.ClassReagents,
 	Enum.BagSlotFlags.ExpansionCurrent,
 	Enum.BagSlotFlags.ExpansionLegacy
-)
+}
+
+local flagNames = tInvert(Enum.BagSlotFlags)
+
+local itemRestrictions = Flags_CreateMask(unpack(flags))
 local expansionRestrictions = Flags_CreateMask(
 	Enum.BagSlotFlags.ExpansionCurrent,
 	Enum.BagSlotFlags.ExpansionLegacy
@@ -113,6 +117,27 @@ function lib:IsItemSuitableForTab(itemInfo, bankType, tabID)
 	end
 	-- print(false, "complete fallthrough")
 	return false
+end
+
+do
+	local numFlags = setmetatable({}, {__index=function(self, num)
+		local count = 0
+		for _, flag in ipairs(flags) do
+			if FlagsUtil.IsSet(num, flag) then
+				count = count + 1
+			end
+		end
+		self[num] = count
+		return count
+	end,})
+
+	-- @return key, numFlagsSet
+	function lib:BuildKeyForTab(bankType, tabID)
+		local data = self:GetTabData(bankType, tabID)
+		if not (data and data.depositFlags) then return end
+		local depositFlags = data.depositFlags
+		return bit.band(depositFlags, itemRestrictions), numFlags[depositFlags]
+	end
 end
 
 -- @return data, tabIndex, numTabs
