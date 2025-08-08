@@ -90,8 +90,15 @@ function lib:IsItemSuitableForTab(itemInfo, bankType, tabID)
 	end
 
 	for flag, itemClasses in pairs(classMap) do
-		if FlagsUtil.IsSet(depositFlags, flag) and tContains(itemClasses, classID) then
-			return true
+		-- print("Considering item class", flag, flagNames[flag], classID, itemType, itemSubType, FlagsUtil.IsSet(depositFlags, flag), tContains(itemClasses, classID))
+		if FlagsUtil.IsSet(depositFlags, flag) then
+			if tContains(itemClasses, classID) then
+				-- print(true, "item class flag set", flag, classID, itemType)
+				return true
+			end
+			if flag == Enum.BagSlotFlags.ClassReagents and select(17, GetItemInfo(itemInfo)) then
+				return true
+			end
 		end
 	end
 
